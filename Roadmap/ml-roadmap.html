@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ML Roadmap 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0f0f13;color:#e0e0ec;font-family:'Inter',sans-serif;padding:28px 16px 80px;min-height:100vh}
+.wrap{max-width:700px;margin:0 auto}
+
+h1{font-size:24px;font-weight:700;color:#fff;margin-bottom:4px}
+.sub{font-size:12px;color:#555570;margin-bottom:28px}
+
+/* progress bar */
+.prog-wrap{margin-bottom:28px}
+.prog-top{display:flex;justify-content:space-between;margin-bottom:6px}
+.prog-label{font-size:11px;color:#555570;text-transform:uppercase;letter-spacing:.06em}
+.prog-pct{font-size:12px;color:#fff;font-weight:600}
+.bar{height:4px;background:#1e1e2a;border-radius:2px;overflow:hidden}
+.bar-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,#6366f1,#8b5cf6);transition:width .4s}
+
+/* phase label */
+.phase-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#555570;margin:28px 0 10px;padding-left:2px}
+
+/* week card */
+.week{background:#16161e;border:1px solid #23232f;border-radius:12px;margin-bottom:10px;overflow:hidden}
+.week-hdr{display:flex;align-items:center;gap:10px;padding:14px 16px;cursor:pointer;user-select:none}
+.week-hdr:hover{background:#1c1c28}
+.week-num{font-size:10px;font-weight:700;background:#23232f;color:#8b8ba8;padding:3px 8px;border-radius:6px;flex-shrink:0}
+.week-title{font-size:13px;font-weight:600;color:#e0e0ec;flex:1}
+.week-done{font-size:11px;color:#555570;flex-shrink:0}
+.week-done.complete{color:#6366f1}
+.chevron{color:#333345;font-size:12px;transition:transform .2s;flex-shrink:0}
+.chevron.open{transform:rotate(180deg)}
+
+/* week body */
+.week-body{display:none;border-top:1px solid #23232f}
+
+/* day row */
+.day{display:flex;align-items:flex-start;gap:12px;padding:12px 16px;border-bottom:1px solid #1e1e28}
+.day:last-of-type{border-bottom:none}
+.day-check{margin-top:2px;flex-shrink:0;accent-color:#6366f1;cursor:pointer;width:15px;height:15px}
+.day-content{flex:1;min-width:0}
+.day-label{font-size:10px;font-weight:700;color:#555570;text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
+.day-topic{font-size:13px;color:#c8c8e0;line-height:1.5;margin-bottom:5px}
+.day.checked .day-topic{color:#3a3a55;text-decoration:line-through}
+.vid-link{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:#7c7cff;text-decoration:none;padding:3px 8px;background:#1a1a2e;border:1px solid #2a2a45;border-radius:5px;transition:border-color .15s}
+.vid-link:hover{border-color:#6366f1}
+.vid-play{font-size:10px;color:#f87171}
+
+/* project box */
+.proj-box{margin:12px 16px 14px;background:#0d0d18;border:1px solid #2a2a3e;border-radius:10px;padding:14px}
+.proj-tag{font-size:10px;font-weight:700;color:#a78bfa;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
+.proj-title{font-size:13px;font-weight:600;color:#d0d0e8;margin-bottom:8px}
+.proj-tasks{list-style:none;display:flex;flex-direction:column;gap:5px}
+.proj-tasks li{display:flex;align-items:flex-start;gap:8px;font-size:12px;color:#8080a0;line-height:1.5}
+.proj-tasks li input{margin-top:2px;flex-shrink:0;accent-color:#a78bfa;cursor:pointer}
+.proj-tasks li.done span{color:#3a3a55;text-decoration:line-through}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>ML Roadmap 2026</h1>
+  <p class="sub">Daily study plan · Video link per day · Weekly project · 30 weeks</p>
+
+  <div class="prog-wrap">
+    <div class="prog-top">
+      <span class="prog-label">Overall Progress</span>
+      <span class="prog-pct" id="pct">0%</span>
+    </div>
+    <div class="bar"><div class="bar-fill" id="bar" style="width:0%"></div></div>
+  </div>
+
+  <div id="root"></div>
+</div>
+
+<script>
+const weeks = [
+// ── BEGINNER ─────────────────────────────────────────────────────────────────
+{phase:'Beginner', n:1, title:'Python ML Toolchain',
+ days:[
+  {d:'Mon', topic:'NumPy — arrays, broadcasting, vectorization', url:'https://www.youtube.com/watch?v=QUT1VHiLmmI', label:'NumPy Crash Course (freeCodeCamp)'},
+  {d:'Tue', topic:'pandas & polars — loading, filtering, groupby', url:'https://www.youtube.com/watch?v=ZyhVh-qRZPA', label:'pandas Tutorial (Corey Schafer)'},
+  {d:'Wed', topic:'matplotlib & seaborn — plots, heatmaps, distributions', url:'https://www.youtube.com/watch?v=3Xc3CA655Y4', label:'Matplotlib Crash Course'},
+  {d:'Thu', topic:'scikit-learn API — fit / predict / transform / Pipeline', url:'https://www.youtube.com/watch?v=0B5eIE_1vpU', label:'Sklearn Crash Course (freeCodeCamp)'},
+  {d:'Fri', topic:'MLflow & wandb — log your first experiment', url:'https://www.youtube.com/watch?v=859OxXrt_TI', label:'MLflow Getting Started'},
+ ],
+ proj:{title:'EDA Notebook — Any Kaggle Dataset', tasks:['Load a Kaggle CSV dataset into pandas','Plot 5 meaningful charts (distribution, correlation heatmap, bar chart)','Find and handle at least 2 missing value columns','Write 3 data insights in markdown cells']}},
+
+{phase:'Beginner', n:2, title:'Data Handling & EDA',
+ days:[
+  {d:'Mon', topic:'Train / val / test splits — stratified, time-based, group', url:'https://www.youtube.com/watch?v=fSytzGwwBVw', label:'Cross Validation (StatQuest)'},
+  {d:'Tue', topic:'Feature scaling — standardize, min-max, robust scaler', url:'https://www.youtube.com/watch?v=9yl6-HEY7_s', label:'Data Preprocessing (Krish Naik)'},
+  {d:'Wed', topic:'Categorical encoding — one-hot, ordinal, target, hashing', url:'https://www.youtube.com/watch?v=589nCGeWG1w', label:'Encoding Categorical Data'},
+  {d:'Thu', topic:'Missing values — drop, impute (mean/median/KNN), indicator', url:'https://www.youtube.com/watch?v=fCWGevB366g', label:'Handling Missing Data'},
+  {d:'Fri', topic:'Data leakage — what it is, how to detect and prevent it', url:'https://www.youtube.com/watch?v=J07XJFIVGWQ', label:'Data Leakage Explained'},
+ ],
+ proj:{title:'House Prices EDA (Kaggle)', tasks:['Handle all missing values using at least 2 strategies','Detect outliers with IQR and visualize them','Encode 2 categorical columns — compare one-hot vs target encoding','Plot a correlation heatmap, highlight top 10 features','Write a proper train/val split with stratification']}},
+
+{phase:'Beginner', n:3, title:'Classical ML — Linear Models & Trees',
+ days:[
+  {d:'Mon', topic:'Linear regression — closed form vs gradient descent', url:'https://www.youtube.com/watch?v=7ArmBVF2dCs', label:'Linear Regression (StatQuest)'},
+  {d:'Tue', topic:'Logistic regression — sigmoid, log-loss, decision boundary', url:'https://www.youtube.com/watch?v=yIYKR4sgzI8', label:'Logistic Regression (StatQuest)'},
+  {d:'Wed', topic:'Decision trees — entropy, Gini, pruning', url:'https://www.youtube.com/watch?v=_L39rN6gz7Y', label:'Decision Trees (StatQuest)'},
+  {d:'Thu', topic:'k-NN — distance metrics, curse of dimensionality', url:'https://www.youtube.com/watch?v=HVXime0nQeI', label:'KNN Explained Visually'},
+  {d:'Fri', topic:'Bias-variance tradeoff — the core tension in all ML', url:'https://www.youtube.com/watch?v=EuBBz3bI-aA', label:'Bias/Variance (StatQuest)'},
+ ],
+ proj:{title:'Credit Card Fraud Detector', tasks:['Train logistic regression with and without class_weight="balanced"','Train a decision tree, tune max_depth with cross-validation','Plot ROC-AUC and PR-AUC for both models side by side','Write 1 paragraph: which model would you ship and why?']}},
+
+{phase:'Beginner', n:4, title:'Classical ML — Ensembles & Clustering',
+ days:[
+  {d:'Mon', topic:'Random forests — bagging, feature subsampling, OOB error', url:'https://www.youtube.com/watch?v=J4Wdy0Wc_xQ', label:'Random Forests (StatQuest)'},
+  {d:'Tue', topic:'Gradient boosting — xgboost, lightgbm, catboost differences', url:'https://www.youtube.com/watch?v=OtD8wVaFm6E', label:'XGBoost Series (StatQuest)'},
+  {d:'Wed', topic:'SVMs — maximum margin + kernel trick intuition', url:'https://www.youtube.com/watch?v=efR1C6CvhmE', label:'SVMs (StatQuest)'},
+  {d:'Thu', topic:'k-means & DBSCAN — clustering for non-convex shapes', url:'https://www.youtube.com/watch?v=4b5d3muPQmA', label:'k-means (StatQuest)'},
+  {d:'Fri', topic:'PCA, t-SNE, UMAP — dimensionality reduction & visualization', url:'https://www.youtube.com/watch?v=FgakZw6K1QQ', label:'PCA Step by Step (StatQuest)'},
+ ],
+ proj:{title:'Customer Segmentation', tasks:['Engineer RFM features on UCI Online Retail dataset','Run k-means — pick k with elbow + silhouette score','Run DBSCAN, compare cluster shapes to k-means','Visualize clusters in 2D with PCA and UMAP side by side','Write a business label for each cluster (e.g. "loyal high-value")']}},
+
+{phase:'Beginner', n:5, title:'Model Evaluation & Feature Engineering',
+ days:[
+  {d:'Mon', topic:'Metrics — accuracy, precision, recall, F1, ROC-AUC, PR-AUC', url:'https://www.youtube.com/watch?v=4jRBRDbJemM', label:'ROC and AUC (StatQuest)'},
+  {d:'Tue', topic:'Learning curves — diagnosing high bias vs high variance', url:'https://www.youtube.com/watch?v=p8hazYSYhW8', label:'Learning Curves Explained'},
+  {d:'Wed', topic:'Numerical transforms — log, Box-Cox, binning, power', url:'https://www.youtube.com/watch?v=yvOOEyMGFKg', label:'Feature Engineering Masterclass (Abhishek Thakur)'},
+  {d:'Thu', topic:'Datetime features — cyclical encoding for hour/day/month', url:'https://www.youtube.com/watch?v=589nCGeWG1w', label:'Target Encoding & Date Features'},
+  {d:'Fri', topic:'Feature selection — mutual info, L1 penalty, permutation importance', url:'https://www.youtube.com/watch?v=yfgdqpVhMa4', label:'Feature Importance Methods Compared'},
+ ],
+ proj:{title:'Full Feature Pipeline on House Prices', tasks:['ColumnTransformer with numerical + categorical branches','Log-transform skewed columns, show before/after distributions','Cyclical encoding for any date feature','5-fold CV: report mean ± std RMSE and R²']}},
+
+{phase:'Beginner', n:6, title:'Sklearn Pipelines & Reproducibility',
+ days:[
+  {d:'Mon', topic:'sklearn Pipeline + ColumnTransformer — full pattern', url:'https://www.youtube.com/watch?v=iYSHQuWkSCs', label:'Sklearn Pipelines In-Depth'},
+  {d:'Tue', topic:'MLflow tracking — params, metrics, artifacts, model registry', url:'https://www.youtube.com/watch?v=859OxXrt_TI', label:'MLflow End-to-End Tutorial'},
+  {d:'Wed', topic:'WandB sweeps — experiment tracking and artifact versioning', url:'https://www.youtube.com/watch?v=EazaM1HFVLs', label:'WandB Full Tutorial'},
+  {d:'Thu', topic:'DVC — version datasets and models like code', url:'https://www.youtube.com/watch?v=kLKBcPonMYw', label:'DVC Tutorial'},
+  {d:'Fri', topic:'Seeding + hydra configs — reproduce any experiment exactly', url:'https://www.youtube.com/watch?v=rNkHEMnFzwM', label:'Reproducibility Best Practices'},
+ ],
+ proj:{title:'Reproducible ML Experiment', tasks:['All seeds set: random, numpy, sklearn','MLflow logs params + metrics + pipeline artifact + confusion matrix PNG','Stratified 5-fold CV loop — log each fold + mean/std','A fresh git clone must reproduce in under 10 minutes — verify this']}},
+
+{phase:'Beginner', n:7, title:'Intro to Neural Networks',
+ days:[
+  {d:'Mon', topic:'Backprop from scratch — build autodiff in pure Python', url:'https://www.youtube.com/watch?v=VMj-3S1tku0', label:'micrograd (Karpathy) — the best backprop video ever made'},
+  {d:'Tue', topic:'NN intuition — perceptron, MLP, forward pass', url:'https://www.youtube.com/watch?v=aircAruvnKk', label:'Neural Networks Series (3Blue1Brown)'},
+  {d:'Wed', topic:'Activation functions — ReLU, GELU, SiLU, softmax compared', url:'https://www.youtube.com/watch?v=Fu273ovPBmQ', label:'Activation Functions Compared'},
+  {d:'Thu', topic:'Optimizers — SGD, momentum, Adam, AdamW — what each adds', url:'https://www.youtube.com/watch?v=d14TUNcbn1k', label:'Optimization & Backprop (Stanford CS231n)'},
+  {d:'Fri', topic:'Regularization — L2 weight decay, dropout, early stopping', url:'https://www.youtube.com/watch?v=NhZVe583Gbe', label:'Dropout and Weight Decay Explained'},
+ ],
+ proj:{title:'MLP from Scratch — NumPy Only', tasks:['Forward pass: Linear → ReLU → Linear → Softmax (no libraries)','Manual backprop: compute all gradients with chain rule yourself','Mini-batch SGD training loop, batch size 64','Reach ≥92% accuracy on MNIST test set','Plot training loss and val accuracy per epoch']}},
+
+{phase:'Beginner', n:8, title:'PyTorch Fundamentals',
+ days:[
+  {d:'Mon', topic:'Tensors, autograd, requires_grad, .backward()', url:'https://www.youtube.com/watch?v=tIeHLnjs5U8', label:'Autograd Computation Graphs Explained'},
+  {d:'Tue', topic:'nn.Module — build custom layers, Dataset + DataLoader', url:'https://www.youtube.com/watch?v=ZoZHd0Zm3RY', label:'Custom Dataset & DataLoader'},
+  {d:'Wed', topic:'Training loop — zero_grad → forward → loss → backward → step', url:'https://www.youtube.com/watch?v=Z_ikDlimN6A', label:'PyTorch Full Course (Daniel Bourke)'},
+  {d:'Thu', topic:'LR schedulers — cosine annealing, OneCycleLR, warmup', url:'https://www.youtube.com/watch?v=DEXJiCQGJ9Y', label:'LR Schedulers in PyTorch'},
+  {d:'Fri', topic:'torch.compile + saving/loading checkpoints with state_dict', url:'https://www.youtube.com/watch?v=qSSwVs9J7vs', label:'torch.compile Explained'},
+ ],
+ proj:{title:'MNIST CNN in PyTorch', tasks:['Conv2D → BatchNorm → ReLU → MaxPool CNN architecture','OneCycleLR scheduler + AdamW optimizer','torch.compile enabled — report the speedup','Reach ≥99% test accuracy','Save and reload checkpoint, verify accuracy matches']}},
+
+{phase:'Beginner', n:9, title:'Beginner Capstone Week',
+ days:[
+  {d:'Mon', topic:'Review all beginner concepts — fill any gaps', url:'https://www.youtube.com/watch?v=LS2Eu6MgCBQ', label:'Approaching ML End-to-End (Abhishek Thakur)'},
+  {d:'Tue', topic:'Polish tabular-baseline project and write README', url:'https://www.youtube.com/watch?v=lc68_d_DnYs', label:'ML Engineering Best Practices'},
+  {d:'Wed', topic:'Polish mnist-from-scratch project and comparison plots', url:'https://course.fast.ai/', label:'fast.ai Practical Deep Learning (free)'},
+  {d:'Thu', topic:'Kaggle: join a competition and read top notebook', url:'https://www.kaggle.com/learn/intro-to-machine-learning', label:'Kaggle Intro to ML (free course)'},
+  {d:'Fri', topic:'Self-quiz: spot leakage, pick metrics, write training loop', url:'https://www.youtube.com/watch?v=lc68_d_DnYs', label:'Review Day — No new content'},
+ ],
+ proj:{title:'Two Capstone Projects Shipped', tasks:['tabular-baseline: lightgbm beats logistic regression by ≥3% F1, MLflow logged','mnist-numpy: manual backprop MLP ≥92% accuracy','mnist-pytorch: CNN ≥99% accuracy, seeded, checkpoint saved','README that reproduces both results on a fresh clone']}},
+
+// ── INTERMEDIATE ─────────────────────────────────────────────────────────────
+{phase:'Intermediate', n:10, title:'Deep Learning — CNNs & Vision',
+ days:[
+  {d:'Mon', topic:'CNN building blocks — conv, pool, batchnorm, residual', url:'https://www.youtube.com/watch?v=AgkfIQ4IGaM', label:'CNNs (Karpathy CS231n)'},
+  {d:'Tue', topic:'ResNet — skip connections and why they enable deep networks', url:'https://www.youtube.com/watch?v=GWt6Fu05voI', label:'ResNet Explained'},
+  {d:'Wed', topic:'EfficientNet — compound scaling (width × depth × resolution)', url:'https://www.youtube.com/watch?v=3svIm5UC94I', label:'EfficientNet Architecture Explained'},
+  {d:'Thu', topic:'Vision Transformers — ViT and Swin: patches as tokens', url:'https://www.youtube.com/watch?v=TrdevFK_am4', label:'ViT Paper Walkthrough (Yannic Kilcher)'},
+  {d:'Fri', topic:'Transfer learning — feature extraction vs full fine-tuning', url:'https://www.youtube.com/watch?v=yofjFQddwHE', label:'Transfer Learning Deep Dive'},
+ ],
+ proj:{title:'CIFAR-10 ResNet Experiment', tasks:['Train ResNet-18 from scratch — target ≥90% test accuracy','Fine-tune pretrained ResNet-18 — freeze then unfreeze','Data augmentation: RandomCrop, HorizontalFlip, Cutout','Plot all training curves: scratch vs pretrained on one figure']}},
+
+{phase:'Intermediate', n:11, title:'Deep Learning — Transformers & Attention',
+ days:[
+  {d:'Mon', topic:'Why RNNs fail — LSTM/GRU limits on long sequences', url:'https://www.youtube.com/watch?v=t3YJ5hKiMQ0', label:'makemore LSTM (Karpathy)'},
+  {d:'Tue', topic:'Attention mechanism — queries, keys, values, softmax', url:'https://www.youtube.com/watch?v=eMlx5fFNoYc', label:'Attention in Transformers (3Blue1Brown)'},
+  {d:'Wed', topic:'Multi-head attention, positional encodings, KV cache', url:'https://www.youtube.com/watch?v=iDulhoQ2pro', label:'Attention Is All You Need (Yannic Kilcher)'},
+  {d:'Thu', topic:'Build a GPT from scratch in PyTorch', url:'https://www.youtube.com/watch?v=kCc8FmEb1nY', label:'Let\'s Build GPT (Karpathy) — watch twice'},
+  {d:'Fri', topic:'Diffusion models — DDPM forward noising, reverse denoising', url:'https://www.youtube.com/watch?v=a4Yfz2FxXiY', label:'Diffusion Models from Scratch'},
+ ],
+ proj:{title:'Character-Level Transformer', tasks:['Multi-head causal self-attention with mask','Stacked transformer blocks + LayerNorm + residuals','Train on Shakespeare — reach < 1.5 bits/char','Sample 200 characters and paste output in your README']}},
+
+{phase:'Intermediate', n:12, title:'Training at Scale',
+ days:[
+  {d:'Mon', topic:'Mixed precision — bf16, fp16, autocast, GradScaler', url:'https://www.youtube.com/watch?v=vkiTM4ETQEQ', label:'Mixed Precision Training in PyTorch'},
+  {d:'Tue', topic:'Gradient accumulation + gradient checkpointing', url:'https://www.youtube.com/watch?v=6pFYBQ5fMDs', label:'Gradient Checkpointing Explained'},
+  {d:'Wed', topic:'Distributed Data Parallel (DDP) — multi-GPU training', url:'https://www.youtube.com/watch?v=PzpPJ4BNWdI', label:'PyTorch DDP Tutorial'},
+  {d:'Thu', topic:'FSDP and DeepSpeed ZeRO stages 1/2/3', url:'https://www.youtube.com/watch?v=wbG2ZEDPIyw', label:'DeepSpeed ZeRO Tutorial'},
+  {d:'Fri', topic:'Profile training with torch.profiler — find your bottleneck', url:'https://www.youtube.com/watch?v=9x4d2MhxSY0', label:'Profiling with torch.profiler'},
+ ],
+ proj:{title:'Scale Your Transformer', tasks:['Enable bf16 mixed precision — measure speedup vs baseline','Gradient accumulation to simulate batch size 256','Profile with torch.profiler — identify top bottleneck','Calculate and document MFU (Model FLOPs Utilization)']}},
+
+{phase:'Intermediate', n:13, title:'Hyperparameter Tuning',
+ days:[
+  {d:'Mon', topic:'Manual search first — build intuition, then automate', url:'https://www.youtube.com/watch?v=P6NwZVl8ttc', label:'Optuna — Bayesian HPO Tutorial'},
+  {d:'Tue', topic:'Bayesian optimization — Optuna TPE sampler deep dive', url:'https://www.youtube.com/watch?v=9zrmUIlScdY', label:'WandB Sweeps Tutorial'},
+  {d:'Wed', topic:'ASHA/Hyperband — kill bad trials early', url:'https://www.youtube.com/watch?v=OnLjdERpg4s', label:'ASHA and Hyperband Explained'},
+  {d:'Thu', topic:'Learning rate finder — the LR range test', url:'https://www.youtube.com/watch?v=kbe_tNGoBHI', label:'LR Finder — Cyclical Learning Rates'},
+  {d:'Fri', topic:'WandB sweep: analyze parameter importance plot', url:'https://www.youtube.com/watch?v=EazaM1HFVLs', label:'WandB Full Tutorial'},
+ ],
+ proj:{title:'Optuna Sweep on CIFAR-10', tasks:['≥30 trials with Optuna TPE sampler','Tune: LR, weight decay, dropout, batch size, optimizer','Enable MedianPruner — compare steps with vs without','Parameter importance plot in wandb — which params actually matter?']}},
+
+{phase:'Intermediate', n:14, title:'NLP Fundamentals',
+ days:[
+  {d:'Mon', topic:'Tokenization — BPE, WordPiece, SentencePiece algorithms', url:'https://www.youtube.com/watch?v=zduSFxRajkE', label:'BPE Tokenization Explained'},
+  {d:'Tue', topic:'Embeddings — word2vec, GloVe, contextual representations', url:'https://www.youtube.com/watch?v=viZrOnJclY0', label:'Word2Vec Skip-gram and CBOW'},
+  {d:'Wed', topic:'Sentence embeddings — sentence-transformers, pooling strategies', url:'https://www.youtube.com/watch?v=OATCgQtNX2o', label:'Sentence Transformers Tutorial'},
+  {d:'Thu', topic:'Cross-encoder vs bi-encoder — speed/quality tradeoff', url:'https://www.youtube.com/watch?v=x7vN6C8Ym9A', label:'Cross-Encoder vs Bi-Encoder'},
+  {d:'Fri', topic:'Text classification and NER with transformers', url:'https://www.youtube.com/watch?v=rmVRLeJRkl4', label:'Stanford CS224n NLP 2024'},
+ ],
+ proj:{title:'Semantic Search Engine', tasks:['Embed ≥1000 articles with a sentence-transformer','Build cosine similarity search in NumPy (no vector DB yet)','Add BM25 alongside — compare results on 20 test queries','Target: query latency < 100ms for 1000 docs']}},
+
+{phase:'Intermediate', n:15, title:'Computer Vision — Detection & Multimodal',
+ days:[
+  {d:'Mon', topic:'albumentations — augmentation pipeline from scratch', url:'https://www.youtube.com/watch?v=rAdLwKJBvPM', label:'albumentations Full Tutorial'},
+  {d:'Wed', topic:'YOLOv8 — object detection end-to-end', url:'https://www.youtube.com/watch?v=wuZtUMEiKWY', label:'YOLOv8 Complete Tutorial'},
+  {d:'Tue', topic:'U-Net — encoder-decoder + skip connections for segmentation', url:'https://www.youtube.com/watch?v=NhdzGfB1q74', label:'U-Net Segmentation Explained'},
+  {d:'Thu', topic:'CLIP — joint image-text embedding space', url:'https://www.youtube.com/watch?v=T9XSU0pKX2E', label:'CLIP Zero-Shot Classification'},
+  {d:'Fri', topic:'Grad-CAM — visualize where your model looks', url:'https://www.youtube.com/watch?v=vSSzd_bBBnQ', label:'Grad-CAM Explained'},
+ ],
+ proj:{title:'Image Classifier with Grad-CAM', tasks:['EfficientNet-B0 fine-tuned on a 5-class dataset (≥200 imgs/class)','albumentations augmentation pipeline applied during training','Confusion matrix with per-class precision/recall/F1','Grad-CAM: show 5 correct + 5 wrong predictions']}},
+
+{phase:'Intermediate', n:16, title:'HuggingFace Ecosystem',
+ days:[
+  {d:'Mon', topic:'transformers — AutoModel, AutoTokenizer, pipeline API', url:'https://www.youtube.com/watch?v=QEaBAZQCtwE', label:'HuggingFace Full Course (Official)'},
+  {d:'Tue', topic:'datasets — load, map, filter, cache, stream large corpora', url:'https://www.youtube.com/watch?v=_BZearw7f0w', label:'HuggingFace datasets Library'},
+  {d:'Wed', topic:'peft — LoRA, QLoRA, IA³, prefix tuning configs', url:'https://www.youtube.com/watch?v=us5NNjJOudU', label:'PEFT / LoRA Tutorial'},
+  {d:'Thu', topic:'trl — SFTTrainer, DPOTrainer, GRPOTrainer overview', url:'https://www.youtube.com/watch?v=8TiMsQer-rI', label:'TRL Library — SFT, DPO, RLHF'},
+  {d:'Fri', topic:'Model Hub — push model, write a proper model card', url:'https://www.youtube.com/watch?v=YfJVkVTpqJE', label:'Pushing Models to HF Hub'},
+ ],
+ proj:{title:'Fine-tune DistilBERT → Push to Hub', tasks:['Fine-tune DistilBERT on SST-2 using HF Trainer','Enable gradient checkpointing + bf16','Test accuracy, F1, confusion matrix — all reported','Push model + tokenizer to HF Hub with a complete model card']}},
+
+{phase:'Intermediate', n:17, title:'Fine-tuning LLMs — QLoRA & DPO',
+ days:[
+  {d:'Mon', topic:'LoRA/QLoRA mechanics — rank, alpha, target modules', url:'https://www.youtube.com/watch?v=PXWYFggLDFc', label:'LoRA Paper Explained (Umar Jamil)'},
+  {d:'Tue', topic:'SFTTrainer setup — chat templates, ShareGPT, Alpaca formats', url:'https://www.youtube.com/watch?v=Us5ZFp16PaU', label:'QLoRA Fine-tuning (Unsloth)'},
+  {d:'Wed', topic:'DPO — preference tuning without a reward model', url:'https://www.youtube.com/watch?v=8TiMsQer-rI', label:'DPO Direct Preference Optimization'},
+  {d:'Thu', topic:'GRPO — reasoning fine-tuning (DeepSeek-R1 style)', url:'https://www.youtube.com/watch?v=f3dGAEdBPHM', label:'GRPO Fine-tuning Explained'},
+  {d:'Fri', topic:'Catastrophic forgetting — detect and prevent it', url:'https://www.youtube.com/watch?v=bWMUB3faqaw', label:'Catastrophic Forgetting in LLMs'},
+ ],
+ proj:{title:'QLoRA Fine-tune a 7B Model', tasks:['Pick a domain: medical QA, code, legal text','QLoRA 4-bit, rank=16, alpha=32, target q_proj + v_proj','BEFORE eval required — document your baseline first','After 1 epoch: document ≥5% improvement over baseline','Push LoRA adapter to HF Hub with model card']}},
+
+{phase:'Intermediate', n:18, title:'Prompt Engineering & RAG',
+ days:[
+  {d:'Mon', topic:'Chain-of-thought prompting and self-consistency sampling', url:'https://www.youtube.com/watch?v=_ZvnD73m40o', label:'Prompt Engineering Course (DeepLearning.AI)'},
+  {d:'Tue', topic:'Structured output — instructor, Pydantic v2, JSON mode', url:'https://www.youtube.com/watch?v=yj-wSRJwrrc', label:'Instructor Library Tutorial'},
+  {d:'Wed', topic:'RAG chunking strategies + embedding models compared', url:'https://www.youtube.com/watch?v=wd7TZ4w1mSw', label:'RAG From Scratch (LangChain Full Series)'},
+  {d:'Thu', topic:'Hybrid search — BM25 + dense with RRF fusion + rerankers', url:'https://www.youtube.com/watch?v=R9O8pKgYCLg', label:'Hybrid Search with Qdrant'},
+  {d:'Fri', topic:'RAGAS evaluation — faithfulness, relevancy, context recall', url:'https://www.youtube.com/watch?v=T-D1OfcDW1M', label:'RAGAS Evaluation Framework'},
+ ],
+ proj:{title:'Production RAG Pipeline', tasks:['Chunk ≥500 docs with semantic chunking, store in qdrant','Hybrid BM25 + dense search with RRF fusion','Cross-encoder reranker as second-stage filter','20-question golden eval set — RAGAS faithfulness ≥ 0.80','FastAPI endpoint: POST /ask → answer + top-3 sources']}},
+
+{phase:'Intermediate', n:19, title:'Intermediate Review Week',
+ days:[
+  {d:'Mon', topic:'Review: transformers paper → map every block to your code', url:'https://www.youtube.com/watch?v=iDulhoQ2pro', label:'Attention Is All You Need (Yannic Kilcher)'},
+  {d:'Tue', topic:'Polish RAG project + add streaming response', url:'https://www.youtube.com/watch?v=tcqEUSNCn8I', label:'LLM App Production Deployment'},
+  {d:'Wed', topic:'Polish QLoRA project + verify HF Hub model card', url:'https://www.youtube.com/watch?v=eC6Hd1hFvos', label:'LLM Fine-tuning Full Production Guide'},
+  {d:'Thu', topic:'Self-quiz: decide between fine-tuning, RAG, prompting for 3 scenarios', url:'https://www.youtube.com/watch?v=sVcwVQRHIc8', label:'Building Production RAG Systems'},
+  {d:'Fri', topic:'Read one transformer paper end to end', url:'https://arxiv-sanity-lite.com/', label:'ArXiv Sanity — Pick a paper'},
+ ],
+ proj:{title:'Intermediate Capstone — Both Projects', tasks:['rag-on-your-docs: ≥10k chunks, hybrid search, ragas faithfulness ≥0.85, FastAPI streaming','qlora-domain-tune: ≥5% lift over baseline, HF Hub card, full wandb run','README with architecture diagram + eval results table']}},
+
+{phase:'Intermediate', n:20, title:'Intermediate Capstone Polish',
+ days:[
+  {d:'Mon', topic:'Add observability to your RAG: log latency + token cost', url:'https://www.youtube.com/watch?v=oo2hKeqAv5Q', label:'Langfuse LLM Observability'},
+  {d:'Tue', topic:'Add CI test to RAG: if faithfulness drops, CI fails', url:'https://www.youtube.com/watch?v=wGrOHMnBNg0', label:'CI/CD for Machine Learning'},
+  {d:'Wed', topic:'Free study / catch-up day — finish anything incomplete', url:'https://www.youtube.com/watch?v=QEaBAZQCtwE', label:'HuggingFace Course Review'},
+  {d:'Thu', topic:'Read one ML paper: write a 10-sentence summary', url:'https://paperswithcode.com/', label:'Papers with Code — Pick one'},
+  {d:'Fri', topic:'Plan your Advanced phase specialization track', url:'https://www.youtube.com/watch?v=hV9ILAhZBsc', label:'Designing ML Systems (Chip Huyen)'},
+ ],
+ proj:{title:'Both Capstones Finalized', tasks:['Both READMEs complete with reproduction steps','RAGAS evaluation results documented with a table','WandB run shared (public link) for QLoRA project','Pick your Advanced specialization: Applied LLM, Research, or Ops']}},
+
+// ── ADVANCED ──────────────────────────────────────────────────────────────────
+{phase:'Advanced', n:21, title:'LLM Internals',
+ days:[
+  {d:'Mon', topic:'Reproduce GPT-2 (124M) from scratch — the best use of a Monday', url:'https://www.youtube.com/watch?v=l8pRSuU81PU', label:'Reproduce GPT-2 (Karpathy) — 4 hours, watch it all'},
+  {d:'Tue', topic:'Flash Attention — IO-aware exact attention, memory math', url:'https://www.youtube.com/watch?v=gMOAud7hZg4', label:'Flash Attention Explained (Tri Dao)'},
+  {d:'Wed', topic:'Speculative decoding — draft model + verifier, 3-5x speedup', url:'https://www.youtube.com/watch?v=dFGj0iqPFOY', label:'Speculative Decoding Explained'},
+  {d:'Thu', topic:'Quantization — GPTQ, AWQ, GGUF, FP8, INT4 tradeoffs', url:'https://www.youtube.com/watch?v=f5-EbcWoQ9I', label:'Quantization Methods Compared'},
+  {d:'Fri', topic:'Scaling laws — Chinchilla, compute-optimal training', url:'https://www.youtube.com/watch?v=UHf3kCSAyB4', label:'Chinchilla Scaling Laws'},
+ ],
+ proj:{title:'Flash Attention Benchmark', tasks:['Implement standard attention vs torch.nn.functional.scaled_dot_product_attention','Benchmark at seq lengths: 512, 1024, 2048, 4096, 8192','Plot: memory vs sequence length, throughput vs sequence length','At what sequence length does Flash Attention actually matter?']}},
+
+{phase:'Advanced', n:22, title:'Inference Serving',
+ days:[
+  {d:'Mon', topic:'vLLM — paged attention, continuous batching, architecture', url:'https://www.youtube.com/watch?v=5ZlavKF_98U', label:'vLLM Deep Dive'},
+  {d:'Tue', topic:'SSE streaming — deliver tokens one by one with FastAPI', url:'https://www.youtube.com/watch?v=RqMVPr3nYSg', label:'FastAPI + SSE Streaming for LLMs'},
+  {d:'Wed', topic:'Quantize and deploy a 7B model locally with ollama', url:'https://www.youtube.com/watch?v=90ozfdsQOKo', label:'Deploy LLMs with Ollama'},
+  {d:'Thu', topic:'TensorRT-LLM — engine building and quantization', url:'https://www.youtube.com/watch?v=Mn_9W1nCFLo', label:'TensorRT-LLM Tutorial'},
+  {d:'Fri', topic:'Load testing with locust — find your throughput ceiling', url:'https://docs.vllm.ai/', label:'vLLM Documentation'},
+ ],
+ proj:{title:'Production LLM Server', tasks:['vLLM server with AWQ-quantized 7B model','FastAPI + SSE streaming endpoint','OpenAI-compatible /v1/chat/completions endpoint','Load test at 1/4/8/16 concurrent users — report p50/p95/p99 latency']}},
+
+{phase:'Advanced', n:23, title:'Agent Frameworks & Tool Use',
+ days:[
+  {d:'Mon', topic:'LangGraph — stateful agent graphs with checkpointing', url:'https://www.youtube.com/watch?v=R-o_a6dvzQM', label:'LangGraph Full Tutorial'},
+  {d:'Tue', topic:'Multi-agent patterns — planner-executor, debate, swarm', url:'https://www.youtube.com/watch?v=F8NKVhkZZWI', label:'Multi-Agent Systems with LangGraph'},
+  {d:'Wed', topic:'pydantic-ai — strongly typed tool inputs and outputs', url:'https://www.youtube.com/watch?v=Eug2clsLtFs', label:'ReAct Agents from Scratch'},
+  {d:'Thu', topic:'MCP — build your own Model Context Protocol server', url:'https://www.youtube.com/watch?v=FNjBMXtJ78I', label:'MCP Protocol Explained'},
+  {d:'Fri', topic:'Prompt injection in agents — attacks and defenses', url:'https://www.youtube.com/watch?v=AQtXsGnxQCM', label:'LLM Security & Prompt Injection'},
+ ],
+ proj:{title:'Research Agent', tasks:['LangGraph graph with ≥3 tools: web search, Wikipedia, file write','Pydantic-validated args for every tool call','Human-in-the-loop approval before writing to disk','Produce a 500-word cited report on any topic in < 60 seconds']}},
+
+{phase:'Advanced', n:24, title:'Distributed Training Engineering',
+ days:[
+  {d:'Mon', topic:'DDP → FSDP — when each and how to set up', url:'https://www.youtube.com/watch?v=pKAnhSGVNRs', label:'DDP + FSDP Full Tutorial'},
+  {d:'Tue', topic:'Pipeline and tensor parallelism for 70B+ models', url:'https://www.youtube.com/watch?v=siqLzh1BKC8', label:'Pipeline & Tensor Parallelism'},
+  {d:'Wed', topic:'DeepSpeed ZeRO stages 1/2/3 — partition strategy', url:'https://www.youtube.com/watch?v=wbG2ZEDPIyw', label:'DeepSpeed ZeRO Tutorial'},
+  {d:'Thu', topic:'Checkpoint sharding + recovery from node failure', url:'https://pytorch.org/tutorials/intermediate/FSDP_tutorial.html', label:'FSDP Official Tutorial'},
+  {d:'Fri', topic:'MFU and HFU — measure and improve GPU utilization', url:'https://www.youtube.com/watch?v=qz9aj9lzLvQ', label:'Calculating MFU and HFU'},
+ ],
+ proj:{title:'DDP vs FSDP Benchmark', tasks:['Train 300M param model with DDP — record MFU','Same with FSDP — compare peak GPU memory + throughput','Simulate node failure at step 1000 — recover from checkpoint','Write decision guide: when to use DDP vs FSDP vs DeepSpeed']}},
+
+{phase:'Advanced', n:25, title:'MLOps & Production Systems',
+ days:[
+  {d:'Mon', topic:'CI/CD for ML — GitHub Actions: retrain → eval → deploy', url:'https://www.youtube.com/watch?v=wGrOHMnBNg0', label:'CI/CD for Machine Learning'},
+  {d:'Tue', topic:'Drift detection — data, concept, prediction drift', url:'https://www.youtube.com/watch?v=L7gFULQD3S4', label:'Evidently AI Drift Monitoring'},
+  {d:'Wed', topic:'Shadow + canary + A/B deployments with rollback criteria', url:'https://www.youtube.com/watch?v=FX6naJLaq2Y', label:'KServe Kubernetes Model Serving'},
+  {d:'Thu', topic:'Feature stores — feast, online vs offline serving', url:'https://www.youtube.com/watch?v=DaNv-Wf1NvA', label:'Feature Stores with Feast'},
+  {d:'Fri', topic:'Full MLOps lifecycle review — DataTalks course', url:'https://www.youtube.com/watch?v=9BgIDqAzfuA', label:'MLOps Full Course (DataTalks.Club)'},
+ ],
+ proj:{title:'ML CI/CD with Drift Detection', tasks:['GitHub Actions: retrain → eval → deploy if metrics pass threshold','Canary deploy: 10% traffic to new model, compare vs champion','Evidently drift monitor on features and predictions','Auto-alert: if drift detected, open GitHub issue with report']}},
+
+{phase:'Advanced', n:26, title:'Observability, Safety & Governance',
+ days:[
+  {d:'Mon', topic:'Langfuse — trace every LLM request with full metadata', url:'https://www.youtube.com/watch?v=oo2hKeqAv5Q', label:'Langfuse LLM Observability Tutorial'},
+  {d:'Tue', topic:'PII scrubbing with presidio before any log storage', url:'https://www.youtube.com/watch?v=F0yRSfNqMl4', label:'Microsoft Presidio PII Detection'},
+  {d:'Wed', topic:'Red-teaming with garak — automated vulnerability scanning', url:'https://www.youtube.com/watch?v=rIFZ7Z8Eqhk', label:'Red-Teaming LLMs with Garak'},
+  {d:'Thu', topic:'EU AI Act and NIST AI RMF — what engineers must know', url:'https://www.youtube.com/watch?v=q3nkJB2FBgg', label:'EU AI Act for ML Engineers'},
+  {d:'Fri', topic:'Quality regression alerts — not just latency and error alerts', url:'https://langfuse.com/docs', label:'Langfuse Documentation'},
+ ],
+ proj:{title:'Observable + Hardened RAG System', tasks:['Langfuse tracing on every request: prompt, latency, tokens, cost','PII scrubbing before any log is written','Run garak — document all probes that return a hit','Patch one vulnerability — show before/after garak results']}},
+
+{phase:'Advanced', n:27, title:'Hardware, Performance & Data-Centric AI',
+ days:[
+  {d:'Mon', topic:'GPU memory budget — params + grads + optimizer + activations', url:'https://www.youtube.com/watch?v=dBoqkPRKrX4', label:'GPU Memory Optimization Deep Dive'},
+  {d:'Tue', topic:'torch.compile modes and graph breaks — full guide', url:'https://www.youtube.com/watch?v=s_8F1e8yz3A', label:'torch.compile Internals'},
+  {d:'Wed', topic:'Write your first Triton kernel — fused softmax', url:'https://www.youtube.com/watch?v=nMHMsEdYgfY', label:'Write Your First Triton Kernel'},
+  {d:'Thu', topic:'Label quality auditing with cleanlab — confident learning', url:'https://www.youtube.com/watch?v=hXDlVF40hSc', label:'Cleanlab — Finding Label Errors'},
+  {d:'Fri', topic:'Synthetic data generation with LLMs for training', url:'https://www.youtube.com/watch?v=9bQ4C0yp7CA', label:'Synthetic Training Data with LLMs'},
+ ],
+ proj:{title:'Profile + Optimize a Training Run', tasks:['torch.profiler trace on Week 12 training run — generate Chrome trace','Identify top bottleneck: compute, memory bandwidth, or data loading','Apply one fix (torch.compile, pinned memory, kernel fusion) — document speedup','Calculate MFU before and after — what % of hardware peak?']}},
+
+{phase:'Advanced', n:28, title:'Recommender Systems & Research Literacy',
+ days:[
+  {d:'Mon', topic:'Two-tower retrieval — user tower + item tower architecture', url:'https://www.youtube.com/watch?v=ZspR5PZemcs', label:'Two-Tower Models (YouTube Rec Paper)'},
+  {d:'Tue', topic:'FAISS — IVF, HNSW, and billion-scale ANN indexing', url:'https://www.youtube.com/watch?v=sKyvsdEv6rk', label:'FAISS Billion-Scale Search'},
+  {d:'Wed', topic:'Learning-to-rank — pointwise vs pairwise vs listwise', url:'https://www.youtube.com/watch?v=FyANOlLBTzQ', label:'LambdaMART Explained'},
+  {d:'Thu', topic:'Reading papers fast — abstract → figs → results → method', url:'https://www.youtube.com/watch?v=733m6qBH-jI', label:'How to Read ML Papers Efficiently'},
+  {d:'Fri', topic:'Reproduce a paper — pick one, run it on a small budget', url:'https://paperswithcode.com/', label:'Papers with Code — SOTA Leaderboards'},
+ ],
+ proj:{title:'Two-Tower Recommender + Paper Reproduction', tasks:['Two-tower model on MovieLens-1M: Recall@10 and NDCG@10','FAISS IVF index — < 10ms per query','Pick an ArXiv paper, reproduce main result within 15% on small budget','1-page review: what was strong, what was weak']}},
+
+{phase:'Advanced', n:29, title:'Specialization Week',
+ days:[
+  {d:'Mon', topic:'Semantic caching — cache by embedding similarity, 10x cost cut', url:'https://www.youtube.com/watch?v=iQW_KjK8cUE', label:'Semantic Caching for LLM Apps'},
+  {d:'Tue', topic:'LLM routing — route to cheapest sufficient model', url:'https://www.youtube.com/watch?v=F7oGiAmjvLk', label:'LLM Router Tutorial'},
+  {d:'Wed', topic:'TimeGPT / Nixtla — zero-shot time series forecasting', url:'https://www.youtube.com/watch?v=bMpYuoqxlx4', label:'TimeGPT Zero-Shot Forecasting'},
+  {d:'Thu', topic:'Whisper fine-tuning on a custom language or domain', url:'https://www.youtube.com/watch?v=dj73lTMTmYo', label:'Whisper Fine-Tuning Tutorial'},
+  {d:'Fri', topic:'Study nanoGPT source code line by line', url:'https://github.com/karpathy/nanoGPT', label:'nanoGPT — Karpathy (read the code)'},
+ ],
+ proj:{title:'Specialization Track Project', tasks:['Applied LLM: LLM API with semantic caching + routing + cost dashboard','OR ML Research: nanoGPT at 10M params with full ablation table','OR Time Series: TimeGPT forecasting pipeline vs statistical baselines','OR Speech: Whisper fine-tune + FastAPI deployment + TTS response']}},
+
+{phase:'Advanced', n:30, title:'Advanced Capstone Week',
+ days:[
+  {d:'Mon', topic:'Build prod-llm-platform — vLLM + OpenAI-compatible endpoint', url:'https://www.youtube.com/watch?v=5ZlavKF_98U', label:'Production LLM Platform Tutorial'},
+  {d:'Tue', topic:'Add per-tenant rate limits + OTel token traces + guardrails', url:'https://www.youtube.com/watch?v=R-o_a6dvzQM', label:'Production Agents with LangGraph'},
+  {d:'Wed', topic:'Build agent-with-evals — LangGraph + ≥5 tools + golden eval set', url:'https://www.youtube.com/watch?v=hV9ILAhZBsc', label:'Designing ML Systems (Chip Huyen)'},
+  {d:'Thu', topic:'Add CI: fails if quality regression on golden eval set', url:'https://www.youtube.com/watch?v=wGrOHMnBNg0', label:'CI/CD for ML Models'},
+  {d:'Fri', topic:'Deploy agent with autoscaling — Cloud Run or Azure Container Apps', url:'https://www.youtube.com/watch?v=z4uh7aOV6H0', label:'ML System Design Interview'},
+ ],
+ proj:{title:'Two Advanced Capstone Projects — Ship Both', tasks:['prod-llm-platform: vllm + OpenAI-compatible endpoint + rate limits + OTel traces + guardrails + ≥99% uptime in 7-day soak test','agent-with-evals: LangGraph + ≥5 Pydantic tools + ≥50 golden evals + CI fails on regression + Langfuse traces + autoscaling deploy','Both have README: architecture diagram, eval results, total cost spent']}},
+];
+
+// ── State ──────────────────────────────────────────────────────────────────────
+let state = {};
+const expanded = new Set();
+
+function stateKey(w, d) { return `w${w}-d${d}`; }
+function projKey(w, i) { return `w${w}-p${i}`; }
+
+function save() { try { localStorage.setItem('mlr26simple', JSON.stringify(state)); } catch(e){} }
+function load() { try { const r = localStorage.getItem('mlr26simple'); if (r) state = JSON.parse(r); } catch(e){ state = {}; } }
+
+function totalItems() {
+  let t = 0, d = 0;
+  weeks.forEach((w, wi) => {
+    w.days.forEach((_, di) => { t++; if (state[stateKey(wi, di)]) d++; });
+    if (w.proj) w.proj.tasks.forEach((_, ti) => { t++; if (state[projKey(wi, ti)]) d++; });
+  });
+  return { t, d };
+}
+
+function updateProgress() {
+  const { t, d } = totalItems();
+  const pct = t ? Math.round(d / t * 100) : 0;
+  document.getElementById('pct').textContent = pct + '%';
+  document.getElementById('bar').style.width = pct + '%';
+
+  weeks.forEach((w, wi) => {
+    const el = document.getElementById('wd-' + wi);
+    if (!el) return;
+    let done = 0, total = w.days.length + (w.proj ? w.proj.tasks.length : 0);
+    w.days.forEach((_, di) => { if (state[stateKey(wi, di)]) done++; });
+    if (w.proj) w.proj.tasks.forEach((_, ti) => { if (state[projKey(wi, ti)]) done++; });
+    const complete = done === total;
+    el.textContent = complete ? '✓ done' : done + '/' + total;
+    el.className = 'week-done' + (complete ? ' complete' : '');
+    const card = document.getElementById('wcard-' + wi);
+    if (card) card.style.borderColor = complete ? '#2a2a50' : '';
+  });
+}
+
+function toggleWeek(wi) {
+  if (expanded.has(wi)) expanded.delete(wi); else expanded.add(wi);
+  const body = document.getElementById('wbody-' + wi);
+  const chev = document.getElementById('wchev-' + wi);
+  if (body) body.style.display = expanded.has(wi) ? 'block' : 'none';
+  if (chev) chev.className = 'chevron' + (expanded.has(wi) ? ' open' : '');
+}
+
+function checkDay(wi, di) {
+  const k = stateKey(wi, di);
+  state[k] = !state[k];
+  const row = document.getElementById('day-' + wi + '-' + di);
+  if (row) row.className = 'day' + (state[k] ? ' checked' : '');
+  const cb = document.getElementById('cb-' + wi + '-' + di);
+  if (cb) cb.checked = state[k];
+  save(); updateProgress();
+}
+
+function checkProj(wi, ti) {
+  const k = projKey(wi, ti);
+  state[k] = !state[k];
+  const row = document.getElementById('pt-' + wi + '-' + ti);
+  if (row) row.className = state[k] ? 'done' : '';
+  const cb = document.getElementById('pcb-' + wi + '-' + ti);
+  if (cb) cb.checked = state[k];
+  save(); updateProgress();
+}
+
+function render() {
+  const root = document.getElementById('root');
+  let html = '';
+  let lastPhase = '';
+
+  weeks.forEach((w, wi) => {
+    if (w.phase !== lastPhase) {
+      const colors = { Beginner: '#4ade80', Intermediate: '#fb923c', Advanced: '#f87171' };
+      html += `<div class="phase-label" style="color:${colors[w.phase]}">${w.phase} Phase</div>`;
+      lastPhase = w.phase;
+    }
+
+    const isOpen = expanded.has(wi);
+    html += `<div class="week" id="wcard-${wi}">
+      <div class="week-hdr" onclick="toggleWeek(${wi})">
+        <span class="week-num">Week ${w.n}</span>
+        <span class="week-title">${w.title}</span>
+        <span class="week-done" id="wd-${wi}">0/${w.days.length + (w.proj ? w.proj.tasks.length : 0)}</span>
+        <span class="chevron${isOpen ? ' open' : ''}" id="wchev-${wi}">▼</span>
+      </div>
+      <div class="week-body" id="wbody-${wi}" style="display:${isOpen ? 'block' : 'none'}">`;
+
+    w.days.forEach((day, di) => {
+      const k = stateKey(wi, di);
+      const done = state[k] || false;
+      html += `<div class="day${done ? ' checked' : ''}" id="day-${wi}-${di}">
+        <input class="day-check" type="checkbox" id="cb-${wi}-${di}" ${done ? 'checked' : ''} onchange="checkDay(${wi},${di})">
+        <div class="day-content">
+          <div class="day-label">${day.d}</div>
+          <div class="day-topic">${day.topic}</div>
+          <a class="vid-link" href="${day.url}" target="_blank">
+            <span class="vid-play">▶</span>${day.label}
+          </a>
+        </div>
+      </div>`;
+    });
+
+    if (w.proj) {
+      html += `<div class="proj-box">
+        <div class="proj-tag">Weekly Project</div>
+        <div class="proj-title">${w.proj.title}</div>
+        <ul class="proj-tasks">`;
+      w.proj.tasks.forEach((task, ti) => {
+        const k = projKey(wi, ti);
+        const done = state[k] || false;
+        html += `<li class="${done ? 'done' : ''}" id="pt-${wi}-${ti}">
+          <input type="checkbox" id="pcb-${wi}-${ti}" ${done ? 'checked' : ''} onchange="checkProj(${wi},${ti})">
+          <span>${task}</span>
+        </li>`;
+      });
+      html += `</ul></div>`;
+    }
+
+    html += `</div></div>`;
+  });
+
+  root.innerHTML = html;
+  updateProgress();
+}
+
+load(); render();
+</script>
+</body>
+</html>
